@@ -4,9 +4,137 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AssociaValoriQuotaNew"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        mc:Ignorable="d"        
+        Title="AssociaValoriQuotaNew" 
+        Height="450" 
+        Width="800" 
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Image Source="/Resources/Images/LOGO_TRASPARENTE.png" Grid.Column="0" RenderOptions.BitmapScalingMode="Fant" />
+            <TextBlock Grid.Column="1" FontFamily="Consolas" TextWrapping="Wrap" Foreground="DarkBlue" TextAlignment="Center">
+                <LineBreak/>
+                <Run>Geocom Parma S.r.l. </Run><LineBreak/>
+                <Run> Via Galeotti n. 7 - 43019 Soragna (PR)</Run><LineBreak/>
+                <Run> Tel./fax 0524 597237 - Cel. 333 522 0984</Run><LineBreak/>
+                <Run> Email - info@geocomparma.it</Run>
+            </TextBlock>
+        </Grid>
         
+        <TabControl Grid.Row="1" x:Name="MainTabControl">
+            <TabItem x:Name="MainTabItem" Visibility="Visible">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="125"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel>
+                        <Menu Grid.Row="0" Height="Auto" Width="Auto">
+
+                            <MenuItem x:Name="FileManagementMenuItem" Header="_File" Height="25" >
+                                <MenuItem Header="Add File" Click="AddFileToolbarButton_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Images/add_plus.png"></Image>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+                    </DockPanel>
+
+                    <ListView Grid.Row="1"
+                              ItemsSource="{Binding }"
+                              x:Name="FileListView">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="File Name"
+                                    DisplayMemberBinding="{Binding Path=FileName}"                                    
+                                    Width="250"/>
+                                <GridViewColumn Header ="File Path" DisplayMemberBinding="{Binding Path=Path}"
+                                    Width="520"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>                           
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <DockPanel Grid.Column="0" Grid.Row="1">
+                            <Label Content="Input File Separator" Width="130"/>
+                            <ComboBox x:Name="InputFileSeparatorChooseComboBox"
+                                      ItemsSource="{Binding }"
+                                      DisplayMemberPath="Key"
+                                      Width="125"
+                                      SelectionChanged="InputFileSeparatorChooseComboBox_SelectionChanged"
+                                      Text="Chose the separator"></ComboBox>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Grid.Row="1">
+                            <Label Content="Output File Separator"/>
+                            <ComboBox x:Name="OutputFileSeparatorChooseComboBox"
+                                      ItemsSource="{Binding}"
+                                      DisplayMemberPath="Key"
+                                      Width="125"
+                                      SelectionChanged="OutputFileSeparatorChooseComboBox_SelectionChanged"
+                                      Text="Chose the separator"></ComboBox>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="0" Grid.Row="3">
+                            <Label Content="Difference Quote Value"/>
+                            <TextBox x:Name="DifferenceQuoteValueTextBox" Width="125"/>
+                        </DockPanel>                        
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="InputFileParameterOrder" Visibility="Collapsed">
+                <local:InputFileParametersUserControl x:Name="inputFileParametersUserControl"/>
+            </TabItem>
+
+            <TabItem x:Name="OutputFileParameterOrder" Visibility="Collapsed">
+                <local:OutputColumnOrderUserControl x:Name="outputColumnOrderUserControl"/>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="1">
+                <Label Content="" Width="130"/>
+                <Button Content="Next                       >" 
+                        Width="125" 
+                        Visibility="Visible"
+                        x:Name="NextButton"
+                        Click="NextButton_Click"></Button>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>

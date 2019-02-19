@@ -24,5 +24,58 @@ namespace AssociaValoriQuotaNew
         {
             InitializeComponent();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddFileToolbarButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void InputFileSeparatorChooseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void OutputFileSeparatorChooseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }        
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool bypass = false;
+
+            if(MainTabItem.Visibility == Visibility.Visible)
+            {
+                InputFileParameterOrder.Visibility = Visibility.Visible;
+                MainTabItem.Visibility = Visibility.Collapsed;
+                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                InputFileParameterOrder.IsSelected = true;
+                bypass = true;
+            }
+
+            if(InputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
+            {
+                InputFileParameterOrder.Visibility = Visibility.Collapsed;
+                MainTabItem.Visibility = Visibility.Collapsed;
+                OutputFileParameterOrder.Visibility = Visibility.Visible;
+                OutputFileParameterOrder.IsSelected = true;
+                bypass = true;
+            }
+
+            if(OutputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
+            {
+                InputFileParameterOrder.Visibility = Visibility.Collapsed;
+                MainTabItem.Visibility = Visibility.Visible;
+                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                MainTabItem.IsSelected = true;
+            }
+
+            MainTabControl.UpdateLayout();
+        }
     }
 }

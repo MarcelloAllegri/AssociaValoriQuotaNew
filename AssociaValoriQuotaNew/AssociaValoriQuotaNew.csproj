@@ -49,12 +49,39 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="InputFileParametersUserControl.xaml.cs">
+      <DependentUpon>InputFileParametersUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OutputColumnOrderUserControl.xaml.cs">
+      <DependentUpon>OutputColumnOrderUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Classes\Campi.cs" />
+    <Compile Include="Resources\Classes\FileInformation.cs" />
+    <Page Include="InputFileParametersUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +94,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="OutputColumnOrderUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -86,6 +117,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -93,6 +125,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\add_plus.png" />
+    <Resource Include="Resources\Images\close.png" />
+    <Resource Include="Resources\Images\LOGO_TRASPARENTE.png" />
+    <Resource Include="Resources\Images\run.png" />
+    <Resource Include="Resources\Images\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\left_to_right_Arrow.png" />
+    <Resource Include="Resources\Images\right_to_left_Arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
