@@ -73,12 +73,19 @@
     <Compile Include="InputFileParametersUserControl.xaml.cs">
       <DependentUpon>InputFileParametersUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InsertDelimitatorUserControl.xaml.cs">
+      <DependentUpon>InsertDelimitatorUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OutputColumnOrderUserControl.xaml.cs">
       <DependentUpon>OutputColumnOrderUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Resources\Classes\Campi.cs" />
     <Compile Include="Resources\Classes\FileInformation.cs" />
     <Page Include="InputFileParametersUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InsertDelimitatorUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

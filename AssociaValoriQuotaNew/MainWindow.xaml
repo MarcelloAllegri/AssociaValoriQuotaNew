@@ -119,6 +119,42 @@
             <TabItem x:Name="OutputFileParameterOrder" Visibility="Collapsed">
                 <local:OutputColumnOrderUserControl x:Name="outputColumnOrderUserControl"/>
             </TabItem>
+
+            <TabItem x:Name="customCharacterUserControl" Header="Custom Separator"  Visibility="Hidden">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <ToolBar x:Name="CustomCharacterUserControlToolBar" Height="30" Visibility="{Binding ElementName=customCharacterUserControl}">
+                        <Button x:Name="SaveButton" 
+                            Height="Auto" 
+                            Width="Auto" 
+                            ToolTip="Save"
+                            Click="SaveButton_Click">
+                            <Button.Content>
+                                <Image  Source="/Resources/Images/save.png"></Image>
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="CloseButton" 
+                            Height="Auto" 
+                            Width="Auto" 
+                            ToolTip="Close"
+                            Click="CloseButton_Click">
+                            <Button.Content>
+                                <Image Source="/Resources/Images/close.png"></Image>
+                            </Button.Content>
+                        </Button>
+                    </ToolBar>
+
+                    <local:InsertDelimitatorUserControl Grid.Row="1" 
+                                                    Visibility="{Binding ElementName=customCharacterUserControl}"
+                                                    VerticalAlignment="Top" 
+                                                    x:Name="insertDelimitatorUserControl"/>
+                </Grid>
+
+            </TabItem>
         </TabControl>
 
         <Grid Grid.Row="2">
