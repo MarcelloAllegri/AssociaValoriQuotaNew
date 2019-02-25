@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:AssociaValoriQuotaNew"
              Height="Auto" 
              Width="Auto"
+             x:Name="rootElem"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -23,7 +24,8 @@
 
             <DockPanel Grid.Column="1">
                 <Label Content="Item por Row Founded:" />
-                <TextBox Width="30" IsReadOnly="True" x:Name="ItemFoundedReadOnlyTextBox"/>
+                <TextBox Width="30" IsReadOnly="True" x:Name="ItemFoundedReadOnlyTextBox"
+                         TextChanged="ItemFoundedReadOnlyTextBox_TextChanged"/>
             </DockPanel>
             
         </Grid>
@@ -47,9 +49,12 @@
             <Label Grid.Column="0" Grid.Row="2" Content="North Position"/>
             <Label Grid.Column="0" Grid.Row="3" Content="Quote Position" />
 
-            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="1" x:Name="EstPositionNumericUpAndDown" Width="90"/>
-            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="2" x:Name="NorthPositionNumericUpAndDown" Width="90"/>
-            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="3" x:Name="quotePositionNumericUpAndDown" Width="90"/>
+            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="1" x:Name="EstPositionNumericUpAndDown" Width="90" Minimum="1"
+                                    Value="{Binding Path=EstPosition,ElementName=rootElem,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="2" x:Name="NorthPositionNumericUpAndDown" Width="90" Minimum="1"
+                                    Value="{Binding Path=NorthPosition,ElementName=rootElem,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+            <toolkits:DecimalUpDown Grid.Column="1" Grid.Row="3" x:Name="quotePositionNumericUpAndDown" Width="90" Minimum="1"
+                                    Value="{Binding Path=QuotePosition,ElementName=rootElem,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
         </Grid>
     </Grid>
 </UserControl>

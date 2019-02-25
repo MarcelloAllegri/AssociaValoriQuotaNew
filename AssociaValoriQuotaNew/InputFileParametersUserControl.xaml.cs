@@ -20,9 +20,38 @@ namespace AssociaValoriQuotaNew
     /// </summary>
     public partial class InputFileParametersUserControl : UserControl
     {
+        private int m_EstPosition;
+        public int EstPosition
+        {
+            set { m_EstPosition = value; }
+            get { return m_EstPosition; }
+        }
+
+        private int m_NorthPosition;
+        public int NorthPosition
+        {
+            set { m_NorthPosition = value; }
+            get { return m_NorthPosition; }
+        }
+
+        private int m_QuotePosition;
+        public int QuotePosition
+        {
+            set { m_QuotePosition = value; }
+            get { return m_QuotePosition; }
+        }
+
         public InputFileParametersUserControl()
         {
             InitializeComponent();
+        }
+
+        private void ItemFoundedReadOnlyTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ItemFoundedReadOnlyTextBox.Text != null)
+                EstPositionNumericUpAndDown.Maximum = NorthPositionNumericUpAndDown.Maximum = quotePositionNumericUpAndDown.Maximum = Convert.ToInt32(ItemFoundedReadOnlyTextBox.Text);
+            else
+                EstPositionNumericUpAndDown.IsEnabled = NorthPositionNumericUpAndDown.IsEnabled = quotePositionNumericUpAndDown.IsEnabled = false;
         }
     }
 }

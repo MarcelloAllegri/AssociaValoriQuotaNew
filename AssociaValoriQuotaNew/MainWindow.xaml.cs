@@ -19,9 +19,9 @@ namespace AssociaValoriQuotaNew
         Dictionary<string, char> ListOfSeparator;
         private ConcurrentBag<string> m_FileContentList;
         private ConcurrentBag<string> m_OutputFileContentList;
-        private char m_ImputFileDelimiter;
-        private char m_OutputFileDelimiter;
-        private int m_ItemPorRow = -1;
+        private char m_InputFileDelimiter;
+        private char m_OutputFileDelimiter;        
+        private double? m_DifferenceQuoteValue;
 
         public List<FileInformation> fileInformation
         {
@@ -31,12 +31,12 @@ namespace AssociaValoriQuotaNew
 
         public char InputFileDelimiter
         {
-            set { m_ImputFileDelimiter = value; }
+            set { m_InputFileDelimiter = value; }
         }
 
         public char OutputFileDelimiter
         {
-            set { m_ImputFileDelimiter = value; }
+            set { m_InputFileDelimiter = value; }
         }
 
         public MainWindow()
@@ -137,7 +137,7 @@ namespace AssociaValoriQuotaNew
                     case ",":
                     case ";":
                     case "Tab":
-                    case "Space": this.m_ImputFileDelimiter = ListOfSeparator[((KeyValuePair<string, char>)selectedValue).Key]; break;
+                    case "Space": this.m_InputFileDelimiter = ListOfSeparator[((KeyValuePair<string, char>)selectedValue).Key]; break;
                     case "Other": InsertCustomDelimiter(true); break;
                     default:
                         break;
@@ -177,11 +177,16 @@ namespace AssociaValoriQuotaNew
 
             if(MainTabItem.Visibility == Visibility.Visible)
             {
-                InputFileParameterOrder.Visibility = Visibility.Visible;
-                MainTabItem.Visibility = Visibility.Collapsed;
-                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
-                InputFileParameterOrder.IsSelected = true;
-                bypass = true;
+                if (CheckMainTabFields())
+                {
+                    InputFileParameterOrder.Visibility = Visibility.Visible;
+                    MainTabItem.Visibility = Visibility.Collapsed;
+                    OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                    InputFileParameterOrder.IsSelected = true;
+                    bypass = true;
+
+                    RowItemCount();
+                }
             }
 
             if(InputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
@@ -204,6 +209,41 @@ namespace AssociaValoriQuotaNew
             MainTabControl.UpdateLayout();
         }
 
+        private void RowItemCount()
+        {
+            string firstItem = File.ReadLines(m_fileInformation[0].Path).First();
+            int ColumnCnt = firstItem.Split(m_InputFileDelimiter).Count();
+            inputFileParametersUserControl.ItemFoundedReadOnlyTextBox.Text = ColumnCnt.ToString();
+        }
+
+        private bool CheckMainTabFields()
+        {
+            string itemsNotCompiled = string.Empty;
+
+            if (m_fileInformation == null || string.IsNullOrEmpty(this.m_fileInformation[0].Path))
+                itemsNotCompiled = string.Concat(itemsNotCompiled, "File not selected!");
+
+            if (InputFileSeparatorChooseComboBox.SelectedItem == null)
+                itemsNotCompiled = string.Concat(itemsNotCompiled, "\nInput file character separator not selected!");
+
+            if (OutputFileSeparatorChooseComboBox.SelectedItem == null)
+                itemsNotCompiled = string.Concat(itemsNotCompiled, "\nOutput file character separator not selected!");
+
+
+            m_DifferenceQuoteValue = DifferenceQuoteDoubleUpDown.Value;
+           
+            if(m_DifferenceQuoteValue == null)
+                itemsNotCompiled = string.Concat(itemsNotCompiled, "\nDifference value not Valid!");
+
+            if (!string.IsNullOrEmpty(itemsNotCompiled))
+            {
+                MessageBox.Show("Errors:\n" + itemsNotCompiled);
+                return false;
+            }
+
+            return true;
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string text = insertDelimitatorUserControl.Save();
@@ -213,7 +253,7 @@ namespace AssociaValoriQuotaNew
             {
                 switch (insertDelimitatorUserControl.IsInputDelimiter)
                 {
-                    case true: m_ImputFileDelimiter = text[0]; break;
+                    case true: m_InputFileDelimiter = text[0]; break;
                     case false: m_OutputFileDelimiter = text[0]; break;
                 }
 
@@ -242,5 +282,7 @@ namespace AssociaValoriQuotaNew
             customCharacterUserControl.Visibility = Visibility.Collapsed;
             NextButton.IsEnabled = true;
         }
+
+        
     }
 }
