@@ -53,5 +53,12 @@ namespace AssociaValoriQuotaNew
             else
                 EstPositionNumericUpAndDown.IsEnabled = NorthPositionNumericUpAndDown.IsEnabled = quotePositionNumericUpAndDown.IsEnabled = false;
         }
+
+        public bool CheckFields()
+        {
+            if (m_EstPosition != m_NorthPosition && m_NorthPosition != m_QuotePosition && m_EstPosition != m_QuotePosition)
+                return true;
+            else return false;
+        }
     }
 }

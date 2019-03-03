@@ -80,6 +80,7 @@
       <DependentUpon>OutputColumnOrderUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Resources\Classes\Campi.cs" />
+    <Compile Include="Resources\Classes\DictionaryClass.cs" />
     <Compile Include="Resources\Classes\FileInformation.cs" />
     <Page Include="InputFileParametersUserControl.xaml">
       <SubType>Designer</SubType>
@@ -143,6 +144,9 @@
   <ItemGroup>
     <Resource Include="Resources\Images\left_to_right_Arrow.png" />
     <Resource Include="Resources\Images\right_to_left_Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

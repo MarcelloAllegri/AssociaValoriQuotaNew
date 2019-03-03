@@ -191,19 +191,33 @@ namespace AssociaValoriQuotaNew
 
             if(InputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
             {
-                InputFileParameterOrder.Visibility = Visibility.Collapsed;
-                MainTabItem.Visibility = Visibility.Collapsed;
-                OutputFileParameterOrder.Visibility = Visibility.Visible;
-                OutputFileParameterOrder.IsSelected = true;
-                bypass = true;
+                if (inputFileParametersUserControl.CheckFields())
+                {
+                    InputFileParameterOrder.Visibility = Visibility.Collapsed;
+                    MainTabItem.Visibility = Visibility.Collapsed;
+                    OutputFileParameterOrder.Visibility = Visibility.Visible;
+                    OutputFileParameterOrder.IsSelected = true;
+                    bypass = true;
+                }
+                else
+                {
+                    MessageBox.Show("Tutti i valori devono essere diversi!");
+                }
             }
 
             if(OutputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
             {
-                InputFileParameterOrder.Visibility = Visibility.Collapsed;
-                MainTabItem.Visibility = Visibility.Visible;
-                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
-                MainTabItem.IsSelected = true;
+                if (outputColumnOrderUserControl.CheckList() == true)
+                {
+                    InputFileParameterOrder.Visibility = Visibility.Collapsed;
+                    MainTabItem.Visibility = Visibility.Visible;
+                    OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                    MainTabItem.IsSelected = true;
+                }
+                else
+                {
+                    MessageBox.Show("La lista di destra è vuota!");
+                }
             }
 
             MainTabControl.UpdateLayout();
