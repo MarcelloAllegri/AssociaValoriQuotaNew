@@ -18,7 +18,8 @@ namespace AssociaValoriQuotaNew.Resources.Classes
             this.CampoEst = campoEst;
             this.CampoNord = campoNord;
             this.CampoQuota = campoQuota;
-            this.DifferenceValue = diff;            
+            this.DifferenceValue = diff;
+            this.Calculate();
         }
 
         private double m_CampoEst;
@@ -65,6 +66,16 @@ namespace AssociaValoriQuotaNew.Resources.Classes
         {
             if(this!=null)
                 this.Result = this.CampoQuota - this.DifferenceValue;
+        }
+
+        public string ToString(char separator, Dictionary<char, bool> ViewDictionary)
+        {
+            return (ViewDictionary['E'] == true ? m_CampoEst.ToString() + separator : string.Empty) +
+                (ViewDictionary['N'] == true ? m_CampoNord.ToString() + separator : string.Empty) +
+                (ViewDictionary['Q'] == true ? m_CampoQuota.ToString() + separator : string.Empty) +
+                (ViewDictionary['D'] == true ? m_DifferenceValue.ToString().Replace(',','.') + separator : string.Empty) +
+                (ViewDictionary['R'] == true ? m_Result.ToString().Replace(',', '.') : string.Empty);
+    
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,7 +18,7 @@ namespace AssociaValoriQuotaNew
     {
         private List<FileInformation> m_fileInformation;
         Dictionary<string, char> ListOfSeparator;
-        private ConcurrentBag<string> m_FileContentList;
+        private List<string> m_FileContentList;
         private ConcurrentBag<string> m_OutputFileContentList;
         private char m_InputFileDelimiter;
         private char m_OutputFileDelimiter;        
@@ -115,7 +116,7 @@ namespace AssociaValoriQuotaNew
         {
             try
             {
-                m_FileContentList = new ConcurrentBag<string>(File.ReadAllLines(m_fileInformation[0].Path));
+                m_FileContentList = new List<string>(File.ReadAllLines(m_fileInformation[0].Path));
             }
             catch (Exception)
             {
@@ -212,12 +213,23 @@ namespace AssociaValoriQuotaNew
                     InputFileParameterOrder.Visibility = Visibility.Collapsed;
                     MainTabItem.Visibility = Visibility.Visible;
                     OutputFileParameterOrder.Visibility = Visibility.Collapsed;
-                    MainTabItem.IsSelected = true;
+                    MainTabItem.IsSelected = true;                   
+
+                    m_FileContentList = new List<string>(ImportFile());
+
+                    if (m_FileContentList != null)
+                    {
+                        MainTabItem.IsEnabled = false;
+                        MainTabControl.UpdateLayout();
+                        RunCalculation();
+                    }
                 }
                 else
                 {
                     MessageBox.Show("La lista di destra è vuota!");
                 }
+
+
             }
 
             MainTabControl.UpdateLayout();
@@ -297,6 +309,54 @@ namespace AssociaValoriQuotaNew
             NextButton.IsEnabled = true;
         }
 
-        
+        private IEnumerable<string> ImportFile()
+        {
+            try
+            {
+                return File.ReadAllLines(fileInformation[0].Path);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Errore durante l'importazione del file");
+            }
+
+            return null;
+        }
+
+        private void RunCalculation()
+        {
+            List<Task> SubListTask = new List<Task>();
+            m_OutputFileContentList = new ConcurrentBag<string>();
+
+            Dictionary<char, bool> ViewDictionary = outputColumnOrderUserControl.ReturnVisibilityOfColumn();
+
+            if (!(m_FileContentList.ElementAt(0)).Contains(m_InputFileDelimiter))
+                MessageBox.Show("Input Delimiter not correct!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            else
+            {
+                foreach (var item in m_FileContentList)
+                {
+                    SubListTask.Add(Task.Factory.StartNew(() => 
+                    {
+                        string[] Columns = item.Split(m_InputFileDelimiter);
+
+                        Campi campo = new Campi(Convert.ToDouble(Columns[inputFileParametersUserControl.EstPosition - 1]),
+                            Convert.ToDouble(Columns[inputFileParametersUserControl.NorthPosition - 1]),
+                            Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
+                            m_DifferenceQuoteValue.Value);
+
+                        string app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
+                        m_OutputFileContentList.Add(app);
+                    }));
+                    
+                }
+
+                Task.Factory.ContinueWhenAll(SubListTask.ToArray(), completedTask => 
+                {
+                    SaveResult();
+                    MainTabItem.IsEnabled = true;
+                });
+            }
+        }
     }
 }

@@ -66,7 +66,7 @@ namespace AssociaValoriQuotaNew
         
         private void RightToLeftButton_Click(object sender, RoutedEventArgs e)
         {
-            if (LeftListBox.SelectedItem is DictionaryClass selectedItem)
+            if (RightListBox.SelectedItem is DictionaryClass selectedItem)
             {                
                 LeftQuoteOrder.Add(selectedItem);
                 RightQuoteOrder.Remove(selectedItem);                    
@@ -93,7 +93,7 @@ namespace AssociaValoriQuotaNew
             LeftQuoteOrder = new ObservableCollection<DictionaryClass>() {
                new DictionaryClass('E' , "Est" ),
                new DictionaryClass( 'N' , "Nord" ),
-               new DictionaryClass( 'Q' , "Quote" ),
+               new DictionaryClass( 'Q' , "Quota" ),
                new DictionaryClass( 'D' , "Diff. Value" ),
                new DictionaryClass( 'R' , "Result" )
             };           
@@ -102,9 +102,37 @@ namespace AssociaValoriQuotaNew
         }
 
        public bool CheckList()
-        {
+       {
             if (RightQuoteOrder.Count == 0) return false;
             else return true;
+       }        
+
+        public Dictionary<char,bool> ReturnVisibilityOfColumn()
+        {
+            Dictionary<char, bool> ViewDictionary = new Dictionary<char, bool>();
+
+            if (RightQuoteOrder.Any(x=> x.Key == 'E' && x.Value == "Est"))
+                ViewDictionary.Add('E', true);
+            else
+                ViewDictionary.Add('E', false);
+            if (RightQuoteOrder.Any(x => x.Key == 'N' && x.Value == "Nord"))
+                ViewDictionary.Add('N', true);
+            else
+                ViewDictionary.Add('N', false);
+            if (RightQuoteOrder.Any(x => x.Key == 'Q' && x.Value == "Quota")) 
+                ViewDictionary.Add('Q', true);
+            else
+                ViewDictionary.Add('Q', false);
+            if (RightQuoteOrder.Any(x => x.Key == 'D' && x.Value == "Diff. Value")) 
+                ViewDictionary.Add('D', true);
+            else
+                ViewDictionary.Add('D', false);
+            if (RightQuoteOrder.Any(x => x.Key == 'R' && x.Value == "Result")) 
+                ViewDictionary.Add('R', true);
+            else
+                ViewDictionary.Add('R', false);
+
+            return ViewDictionary;
         }
     }
 }
