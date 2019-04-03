@@ -21,8 +21,22 @@ namespace AssociaValoriQuotaNew
         private List<string> m_FileContentList;
         private ConcurrentBag<string> m_OutputFileContentList;
         private char m_InputFileDelimiter;
-        private char m_OutputFileDelimiter;        
+        private char m_OutputFileDelimiter;
         private double? m_DifferenceQuoteValue;
+        private bool m_CustomDiffQuoteValue;
+        private bool m_SelectValueFromFilename;
+
+        public bool SelectValueFromFilename
+        {
+            set { m_SelectValueFromFilename = value; }
+            get { return m_SelectValueFromFilename; }
+        }
+
+        public bool CustomDiffQuoteValue
+        {
+            set { m_CustomDiffQuoteValue = value; }
+            get { return m_CustomDiffQuoteValue; }
+        }
 
         public List<FileInformation> fileInformation
         {
@@ -52,7 +66,7 @@ namespace AssociaValoriQuotaNew
             ListOfSeparator.Add(".", '.');
             ListOfSeparator.Add(",", ',');
             ListOfSeparator.Add(";", ';');
-            ListOfSeparator.Add("Tab", Convert.ToChar(11));
+            ListOfSeparator.Add("Tab", Convert.ToChar(9));
             ListOfSeparator.Add("Space", ' ');
             ListOfSeparator.Add("Other", 'o');
 
@@ -70,62 +84,52 @@ namespace AssociaValoriQuotaNew
 
             openFileDialog.Filter = "Csv file (*.csv)|*.csv|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
+            openFileDialog.Multiselect = true;
 
             if (openFileDialog.ShowDialog() == true)
             {
                 fileInformation = new List<FileInformation>();
-                fileInformation.Add(new FileInformation(Path.GetFileName(openFileDialog.FileName), Path.GetFullPath(openFileDialog.FileName)));
+                foreach (var item in openFileDialog.FileNames)
+                {
+                    fileInformation.Add(new FileInformation(Path.GetFileName(item), Path.GetFullPath(item)));
+                }
+                
+                
                 this.FileListView.ItemsSource = fileInformation;
             }
         }
 
-        private void SaveResult()
-        {
-            bool retry = true;
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Title = "Salva File Risultato";
-            saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
+        //private void SaveResult()
+        //{
+        //    bool retry = true;
+        //    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        //    saveFileDialog1.Title = "Salva File Risultato";
+        //    saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
 
-            while (retry)
-            {
-                if (saveFileDialog1.ShowDialog() == true)
-                {
-                    if (File.Exists(saveFileDialog1.FileName) == false)
-                    {
+        //    while (retry)
+        //    {
+        //        if (saveFileDialog1.ShowDialog() == true)
+        //        {
+        //            if (File.Exists(saveFileDialog1.FileName) == false)
+        //            {
 
-                        File.AppendAllLines(saveFileDialog1.FileName, m_OutputFileContentList.ToList());
-                        retry = false;
+        //                File.AppendAllLines(saveFileDialog1.FileName, m_OutputFileContentList.ToList());
+        //                retry = false;
 
-                        MessageBox.Show("Procedura di sotituzione completata.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Il file e' correntemente in uso, si prega di chiuderlo.", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
-                        retry = true;
-                    }
-                }
-                else
-                {
-                    retry = true;
-                }
-            }
-        }
-
-        private int GetFile()
-        {
-            try
-            {
-                m_FileContentList = new List<string>(File.ReadAllLines(m_fileInformation[0].Path));
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error during importing file. Check it!");
-                return -1;
-            }
-
-            return 0;
-        }
+        //                MessageBox.Show("Procedura di sotituzione completata.");
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Il file e' correntemente in uso, si prega di chiuderlo.", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+        //                retry = true;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            retry = true;
+        //        }
+        //    }
+        //}        
 
         private void InputFileSeparatorChooseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -215,14 +219,13 @@ namespace AssociaValoriQuotaNew
                     OutputFileParameterOrder.Visibility = Visibility.Collapsed;
                     MainTabItem.IsSelected = true;                   
 
-                    m_FileContentList = new List<string>(ImportFile());
+                    //m_FileContentList = new List<string>(ImportFile());
 
-                    if (m_FileContentList != null)
-                    {
+                    
                         MainTabItem.IsEnabled = false;
                         MainTabControl.UpdateLayout();
                         RunCalculation();
-                    }
+                    
                 }
                 else
                 {
@@ -308,21 +311,7 @@ namespace AssociaValoriQuotaNew
             customCharacterUserControl.Visibility = Visibility.Collapsed;
             NextButton.IsEnabled = true;
         }
-
-        private IEnumerable<string> ImportFile()
-        {
-            try
-            {
-                return File.ReadAllLines(fileInformation[0].Path);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Errore durante l'importazione del file");
-            }
-
-            return null;
-        }
-
+        
         private void RunCalculation()
         {
             List<Task> SubListTask = new List<Task>();
@@ -330,15 +319,19 @@ namespace AssociaValoriQuotaNew
 
             Dictionary<char, bool> ViewDictionary = outputColumnOrderUserControl.ReturnVisibilityOfColumn();
 
-            if (!(m_FileContentList.ElementAt(0)).Contains(m_InputFileDelimiter))
-                MessageBox.Show("Input Delimiter not correct!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            else
-            {
-                foreach (var item in m_FileContentList)
+            
+            
+                StreamReader file = new StreamReader(fileInformation[0].Path);
+                if (file != null)
                 {
-                    SubListTask.Add(Task.Factory.StartNew(() => 
+                string line = file.ReadLine();
+                if (!line.Contains(m_InputFileDelimiter))
+                    MessageBox.Show("Input Delimiter not correct!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                {
+                    using (System.IO.StreamWriter fileout = new System.IO.StreamWriter(Path.GetDirectoryName(fileInformation[0].Path) + "\\fileout.csv"))
                     {
-                        string[] Columns = item.Split(m_InputFileDelimiter);
+                        string[] Columns = line.Split(m_InputFileDelimiter);
 
                         Campi campo = new Campi(Convert.ToDouble(Columns[inputFileParametersUserControl.EstPosition - 1]),
                             Convert.ToDouble(Columns[inputFileParametersUserControl.NorthPosition - 1]),
@@ -346,16 +339,29 @@ namespace AssociaValoriQuotaNew
                             m_DifferenceQuoteValue.Value);
 
                         string app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
-                        m_OutputFileContentList.Add(app);
-                    }));
-                    
-                }
+                        fileout.WriteLine(app);
 
-                Task.Factory.ContinueWhenAll(SubListTask.ToArray(), completedTask => 
-                {
-                    SaveResult();
-                    MainTabItem.IsEnabled = true;
-                });
+
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            Columns = line.Split(m_InputFileDelimiter);
+
+                            campo = new Campi(Convert.ToDouble(Columns[inputFileParametersUserControl.EstPosition - 1]),
+                                Convert.ToDouble(Columns[inputFileParametersUserControl.NorthPosition - 1]),
+                                Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
+                                m_DifferenceQuoteValue.Value);
+
+                            app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
+                            fileout.WriteLine(app);
+                        }
+                        file.Close();
+                        fileout.Close();
+                    }
+                }  
+                
+
+                //SaveResult();
+                MainTabItem.IsEnabled = true;                
             }
         }
     }

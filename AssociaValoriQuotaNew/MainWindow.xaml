@@ -7,8 +7,9 @@
         xmlns:toolkits="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"        
         Title="AssociaValoriQuotaNew" 
-        Height="450" 
+        Height="600" 
         Width="800" 
+        x:Name="rootElement"
         ResizeMode="NoResize"
         Loaded="Window_Loaded">
     <Grid>
@@ -41,7 +42,7 @@
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="100"/>
                         <RowDefinition Height="125"/>
-                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>                        
                     </Grid.RowDefinitions>
 
                     <DockPanel>
@@ -106,13 +107,25 @@
                         </DockPanel>
 
                         <DockPanel Grid.Column="0" Grid.Row="3">
+                            <RadioButton GroupName="DiffValueSource" 
+                                         Content="Insert Value      " 
+                                         Height="Auto" 
+                                         VerticalAlignment="Center"
+                                         IsChecked="{Binding ElementName=rootElement, Path=CustomDiffQuoteValue,Mode=TwoWay}"/>
+                            <RadioButton GroupName="DiffValueSource" 
+                                         Content="Select from file name" 
+                                         Height="Auto" 
+                                         VerticalAlignment="Center"                                         
+                                         IsChecked="{Binding ElementName=rootElement, Path=SelectValueFromFilename,Mode=TwoWay}"/>
+                        </DockPanel>
+                        <DockPanel Grid.Column="1" Grid.Row="3">
                             <Label Content="Difference Quote Value"/>
                             <toolkits:DoubleUpDown x:Name="DifferenceQuoteDoubleUpDown"  
                                                     Width="125"
                                                     FormatString="N3"
                                                     ShowButtonSpinner="False"/>
                         </DockPanel>                        
-                    </Grid>
+                    </Grid>                   
                 </Grid>
             </TabItem>
 
