@@ -3,6 +3,8 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,17 +16,15 @@ namespace AssociaValoriQuotaNew
     /// <summary>
     /// Logica di interazione per MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window,INotifyPropertyChanged
     {
-        private List<FileInformation> m_fileInformation;
-        Dictionary<string, char> ListOfSeparator;
-        private List<string> m_FileContentList;
-        private ConcurrentBag<string> m_OutputFileContentList;
+        private ObservableCollection<FileInformation> m_fileInformation;
+        Dictionary<string, char> ListOfSeparator;       
         private char m_InputFileDelimiter;
         private char m_OutputFileDelimiter;
         private double? m_DifferenceQuoteValue;
         private bool m_CustomDiffQuoteValue;
-        private bool m_SelectValueFromFilename;
+        private bool m_SelectValueFromFilename = true;
 
         public bool SelectValueFromFilename
         {
@@ -38,10 +38,10 @@ namespace AssociaValoriQuotaNew
             get { return m_CustomDiffQuoteValue; }
         }
 
-        public List<FileInformation> fileInformation
+        public ObservableCollection<FileInformation> fileInformation
         {
             get { return m_fileInformation; }
-            set { m_fileInformation = value; }
+            set { m_fileInformation = value; OnPropertyChanged(nameof(fileInformation)); }
         }
 
         public char InputFileDelimiter
@@ -85,17 +85,15 @@ namespace AssociaValoriQuotaNew
             openFileDialog.Filter = "Csv file (*.csv)|*.csv|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             openFileDialog.Multiselect = true;
+            if (fileInformation == null) fileInformation = new ObservableCollection<FileInformation>();
 
             if (openFileDialog.ShowDialog() == true)
-            {
-                fileInformation = new List<FileInformation>();
+            {                
                 foreach (var item in openFileDialog.FileNames)
                 {
                     fileInformation.Add(new FileInformation(Path.GetFileName(item), Path.GetFullPath(item)));
+                    OnPropertyChanged(nameof(fileInformation));
                 }
-                
-                
-                this.FileListView.ItemsSource = fileInformation;
             }
         }
 
@@ -210,22 +208,38 @@ namespace AssociaValoriQuotaNew
                 }
             }
 
-            if(OutputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
+            if (OutputFileParameterOrder.Visibility == Visibility.Visible && bypass == false)
             {
                 if (outputColumnOrderUserControl.CheckList() == true)
                 {
                     InputFileParameterOrder.Visibility = Visibility.Collapsed;
                     MainTabItem.Visibility = Visibility.Visible;
                     OutputFileParameterOrder.Visibility = Visibility.Collapsed;
-                    MainTabItem.IsSelected = true;                   
+                    MainTabItem.IsSelected = true;
 
                     //m_FileContentList = new List<string>(ImportFile());
 
-                    
-                        MainTabItem.IsEnabled = false;
-                        MainTabControl.UpdateLayout();
-                        RunCalculation();
-                    
+
+                    MainTabItem.IsEnabled = true;
+                    MainTabControl.UpdateLayout();
+
+                    using (new WpfWaitCursor())
+                    {
+
+
+                        foreach (var item in fileInformation)
+                        {
+                            double valore_diff = 0;
+
+                            if (SelectValueFromFilename)
+                                valore_diff = getDiffValueFromFilename(item.FileName);
+                            else
+                                valore_diff = m_DifferenceQuoteValue.Value;
+
+                            RunCalculation(item.Path, valore_diff);
+                        }
+                    }
+
                 }
                 else
                 {
@@ -236,6 +250,14 @@ namespace AssociaValoriQuotaNew
             }
 
             MainTabControl.UpdateLayout();
+        }
+
+        private double getDiffValueFromFilename(string filename)
+        {
+            string app = filename.Substring(filename.Count()- 9,5);
+            app = app.Replace('_', '.');
+
+            return double.Parse(app);
         }
 
         private void RowItemCount()
@@ -261,8 +283,8 @@ namespace AssociaValoriQuotaNew
 
             m_DifferenceQuoteValue = DifferenceQuoteDoubleUpDown.Value;
            
-            if(m_DifferenceQuoteValue == null)
-                itemsNotCompiled = string.Concat(itemsNotCompiled, "\nDifference value not Valid!");
+            //if(m_DifferenceQuoteValue == null)
+            //    itemsNotCompiled = string.Concat(itemsNotCompiled, "\nDifference value not Valid!");
 
             if (!string.IsNullOrEmpty(itemsNotCompiled))
             {
@@ -311,32 +333,30 @@ namespace AssociaValoriQuotaNew
             customCharacterUserControl.Visibility = Visibility.Collapsed;
             NextButton.IsEnabled = true;
         }
-        
-        private void RunCalculation()
+
+        private void RunCalculation(string path,double diffValue)
         {
-            List<Task> SubListTask = new List<Task>();
-            m_OutputFileContentList = new ConcurrentBag<string>();
-
             Dictionary<char, bool> ViewDictionary = outputColumnOrderUserControl.ReturnVisibilityOfColumn();
+            
 
-            
-            
-                StreamReader file = new StreamReader(fileInformation[0].Path);
-                if (file != null)
-                {
+            StreamReader file = new StreamReader(path);
+            if (file != null)
+            {
                 string line = file.ReadLine();
                 if (!line.Contains(m_InputFileDelimiter))
                     MessageBox.Show("Input Delimiter not correct!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 else
                 {
-                    using (System.IO.StreamWriter fileout = new System.IO.StreamWriter(Path.GetDirectoryName(fileInformation[0].Path) + "\\fileout.csv"))
+                    string filePath = Path.GetFullPath(path);
+                    filePath = filePath.Remove(filePath.IndexOf('.'), 4);
+                    using (System.IO.StreamWriter fileout = new System.IO.StreamWriter(filePath + "_result.csv"))
                     {
                         string[] Columns = line.Split(m_InputFileDelimiter);
 
                         Campi campo = new Campi(Convert.ToDouble(Columns[inputFileParametersUserControl.EstPosition - 1]),
                             Convert.ToDouble(Columns[inputFileParametersUserControl.NorthPosition - 1]),
                             Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
-                            m_DifferenceQuoteValue.Value);
+                            diffValue);
 
                         string app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
                         fileout.WriteLine(app);
@@ -349,7 +369,7 @@ namespace AssociaValoriQuotaNew
                             campo = new Campi(Convert.ToDouble(Columns[inputFileParametersUserControl.EstPosition - 1]),
                                 Convert.ToDouble(Columns[inputFileParametersUserControl.NorthPosition - 1]),
                                 Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
-                                m_DifferenceQuoteValue.Value);
+                                diffValue);
 
                             app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
                             fileout.WriteLine(app);
@@ -357,11 +377,27 @@ namespace AssociaValoriQuotaNew
                         file.Close();
                         fileout.Close();
                     }
-                }  
-                
+                }                
+            }
+        }
 
-                //SaveResult();
-                MainTabItem.IsEnabled = true;                
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.FileListView.SelectedItem != null)
+            {
+                fileInformation.Remove(this.FileListView.SelectedItem as FileInformation);
+                OnPropertyChanged(nameof(fileInformation));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
     }

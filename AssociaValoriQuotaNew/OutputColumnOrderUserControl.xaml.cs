@@ -61,6 +61,15 @@ namespace AssociaValoriQuotaNew
         public OutputColumnOrderUserControl()
         {
             InitializeComponent();
+            LeftQuoteOrder = new ObservableCollection<DictionaryClass>() {
+               new DictionaryClass('E' , "Est" ),
+               new DictionaryClass( 'N' , "Nord" ),
+               new DictionaryClass( 'Q' , "Quota" ),
+               new DictionaryClass( 'D' , "Diff. Value" ),
+               new DictionaryClass( 'R' , "Result" )
+            };
+
+            RightQuoteOrder = new ObservableCollection<DictionaryClass>();
         }
 
         
@@ -90,15 +99,7 @@ namespace AssociaValoriQuotaNew
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            LeftQuoteOrder = new ObservableCollection<DictionaryClass>() {
-               new DictionaryClass('E' , "Est" ),
-               new DictionaryClass( 'N' , "Nord" ),
-               new DictionaryClass( 'Q' , "Quota" ),
-               new DictionaryClass( 'D' , "Diff. Value" ),
-               new DictionaryClass( 'R' , "Result" )
-            };           
-
-            RightQuoteOrder = new ObservableCollection<DictionaryClass>();
+            
         }
 
        public bool CheckList()

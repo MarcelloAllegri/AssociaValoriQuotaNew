@@ -82,6 +82,7 @@
     <Compile Include="Resources\Classes\Campi.cs" />
     <Compile Include="Resources\Classes\DictionaryClass.cs" />
     <Compile Include="Resources\Classes\FileInformation.cs" />
+    <Compile Include="Resources\Classes\WpfWaitCursor.cs" />
     <Page Include="InputFileParametersUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -147,6 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\trash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
