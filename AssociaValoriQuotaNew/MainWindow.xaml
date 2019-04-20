@@ -197,6 +197,16 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
+            
+                <Button Content="                       Back" 
+                        Width="125" 
+                        HorizontalAlignment="Left"
+                        Margin="50,0,0,0"
+                        Visibility="Collapsed"
+                        x:Name="BackButton"
+                        Click="BackButton_Click"></Button>
+            
+            
             <DockPanel Grid.Column="1">
                 <Label Content="" Width="130"/>
                 <Button Content="Next                       >" 

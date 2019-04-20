@@ -189,6 +189,7 @@ namespace AssociaValoriQuotaNew
                     bypass = true;
 
                     RowItemCount();
+                    BackButton.Visibility = Visibility.Visible;
                 }
             }
 
@@ -216,17 +217,12 @@ namespace AssociaValoriQuotaNew
                     MainTabItem.Visibility = Visibility.Visible;
                     OutputFileParameterOrder.Visibility = Visibility.Collapsed;
                     MainTabItem.IsSelected = true;
-
-                    //m_FileContentList = new List<string>(ImportFile());
-
-
+                    BackButton.Visibility = Visibility.Collapsed;
                     MainTabItem.IsEnabled = true;
-                    MainTabControl.UpdateLayout();
+                    MainTabControl.UpdateLayout();                    
 
                     using (new WpfWaitCursor())
                     {
-
-
                         foreach (var item in fileInformation)
                         {
                             double valore_diff = 0;
@@ -398,6 +394,26 @@ namespace AssociaValoriQuotaNew
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(InputFileParameterOrder.Visibility == Visibility.Visible)
+            {
+                InputFileParameterOrder.Visibility = Visibility.Collapsed;
+                MainTabItem.Visibility = Visibility.Visible;
+                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                MainTabItem.IsSelected = true;
+                BackButton.Visibility = Visibility.Collapsed;
+            }
+
+            if (OutputFileParameterOrder.Visibility == Visibility.Visible)
+            {
+                InputFileParameterOrder.Visibility = Visibility.Visible;
+                MainTabItem.Visibility = Visibility.Collapsed;
+                OutputFileParameterOrder.Visibility = Visibility.Collapsed;
+                InputFileParameterOrder.IsSelected = true;
             }
         }
     }
