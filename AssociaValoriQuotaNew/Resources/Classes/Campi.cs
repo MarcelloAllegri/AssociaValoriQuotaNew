@@ -64,18 +64,34 @@ namespace AssociaValoriQuotaNew.Resources.Classes
 
         public void Calculate()
         {
-            if(this!=null)
+            if (this != null)
                 this.Result = this.CampoQuota - this.DifferenceValue;
         }
 
-        public string ToString(char separator, Dictionary<char, bool> ViewDictionary)
+        //public string ToString(char separator, Dictionary<char, bool> ViewDictionary)
+        //{
+        //    return (ViewDictionary['E'] == true ? m_CampoEst.ToString() + separator : string.Empty) +
+        //        (ViewDictionary['N'] == true ? m_CampoNord.ToString() + separator : string.Empty) +
+        //        (ViewDictionary['Q'] == true ? m_CampoQuota.ToString() + separator : string.Empty) +
+        //        (ViewDictionary['D'] == true ? m_DifferenceValue.ToString().Replace(',','.') + separator : string.Empty) +
+        //        (ViewDictionary['R'] == true ? m_Result.ToString().Replace(',', '.') : string.Empty);
+
+        //}        
+        public string this[string Value]
         {
-            return (ViewDictionary['E'] == true ? m_CampoEst.ToString() + separator : string.Empty) +
-                (ViewDictionary['N'] == true ? m_CampoNord.ToString() + separator : string.Empty) +
-                (ViewDictionary['Q'] == true ? m_CampoQuota.ToString() + separator : string.Empty) +
-                (ViewDictionary['D'] == true ? m_DifferenceValue.ToString().Replace(',','.') + separator : string.Empty) +
-                (ViewDictionary['R'] == true ? m_Result.ToString().Replace(',', '.') : string.Empty);
-    
+            get
+            {
+                switch (Value)
+                {
+                    case "CampoEst": return this.CampoEst.ToString();
+                    case "CampoNord": return this.CampoNord.ToString();
+                    case "CampoQuota": return this.CampoQuota.ToString();
+                    case "DifferenceValue": return this.DifferenceValue.ToString();
+                    case "Result": return this.Result.ToString();
+                    default: return string.Empty;
+                }
+            }
+
         }
     }
 }

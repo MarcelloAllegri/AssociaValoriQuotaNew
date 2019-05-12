@@ -135,5 +135,27 @@ namespace AssociaValoriQuotaNew
 
             return ViewDictionary;
         }
+
+        public Dictionary<string,int> PrintOrder()
+        {
+            Dictionary<string, int> m_PrintOrder = new Dictionary<string, int>();
+            int indice = 0;
+
+            foreach (DictionaryClass item in RightQuoteOrder)
+            {
+                switch (item.Key)
+                {
+                    case 'E': m_PrintOrder.Add("CampoEst", indice); break;
+                    case 'N': m_PrintOrder.Add("CampoNord", indice); break;
+                    case 'Q': m_PrintOrder.Add("CampoQuota", indice); break;
+                    case 'D': m_PrintOrder.Add("DifferenceValue", indice); break;
+                    case 'R': m_PrintOrder.Add("Result", indice); break;
+                }
+
+                indice++;
+            }
+
+            return m_PrintOrder;
+        }
     }
 }

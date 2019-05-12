@@ -333,7 +333,7 @@ namespace AssociaValoriQuotaNew
         private void RunCalculation(string path,double diffValue)
         {
             Dictionary<char, bool> ViewDictionary = outputColumnOrderUserControl.ReturnVisibilityOfColumn();
-            
+            Dictionary<string, int> printOrder = outputColumnOrderUserControl.PrintOrder();
 
             StreamReader file = new StreamReader(path);
             if (file != null)
@@ -354,7 +354,11 @@ namespace AssociaValoriQuotaNew
                             Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
                             diffValue);
 
-                        string app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
+                        string app = campo[printOrder.ElementAt(0).Key];
+
+                        for(int k = 1; k< printOrder.Count;k++)
+                            app = app + m_OutputFileDelimiter + campo[printOrder.ElementAt(k).Key];
+                            
                         fileout.WriteLine(app);
 
 
@@ -367,7 +371,11 @@ namespace AssociaValoriQuotaNew
                                 Convert.ToDouble(Columns[inputFileParametersUserControl.QuotePosition - 1]),
                                 diffValue);
 
-                            app = campo.ToString(m_OutputFileDelimiter, ViewDictionary);
+                            app = string.Empty;
+                            app = campo[printOrder.ElementAt(0).Key];
+                            for (int k = 1; k < printOrder.Count; k++)
+                                app = app + m_OutputFileDelimiter + campo[printOrder.ElementAt(k).Key];
+
                             fileout.WriteLine(app);
                         }
                         file.Close();
